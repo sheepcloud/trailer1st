@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="player"></div>
+
+    <p>
+
+    <select name="movieName" id="movieName">
+    </select>
+
+    <script>
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      var suspendEvent = false;
+      var player;
+
+      var videoList = [
+        { videoId: 'BfU1UjlFaD4', start: 635, title: '【後編】出演者失踪！本当にヤバいSIREN(サイレン)羽生蛇村の岳集落・廃村に潜入スペシャル！' },
+        { videoId: 'Ir95Z1EZL90', start: 612, title: '【後編】本当にあったヤバい部屋！ホテル活魚潜入スペシャル！' },
+        { videoId: 'cXAMuVA44iQ', start: 642, title: '最悪の肝試しスポット！呪いのビデオの廃神社スペシャル!!' },
+        { videoId: 'teDmzHGrPfc', start: 881, title: 'ダイアナ研究所' },
+        { videoId: 'AN5dFDDqG1A', start: 644, title: '【閲覧注意】悪臭漂う謎の心霊スポット&怪現象が見れるお化け坂！' },
+        { videoId: 'EngYqZ_NYZw', start: 814, title: '絶叫！廃ストリップ劇場で肝試し…恐怖の発見物で現場騒然！' },
+        { videoId: 'GRAQQ1qaFqM', start: 801, title: '【前編】浮遊霊の巣窟と化した廃ホテルで心霊写真は撮れるのか？' },
+        { videoId: '292M08ZCKWE', start: 832, title: '【後編】浮遊霊の巣窟と化した廃ホテルで心霊写真は撮れるのか？' },
+        { videoId: 'cRCK2TxVXDk', start: 886, title: '都心の最恐心霊スポット20カ所行脚！まとめて大突撃スペシャル！' },
+        { videoId: 'K9KuBEV6TGo', start: 1099, title: '謎の心霊スポット薬師堂のマキをカメラに収めろ！決死の撮影で緊急事態勃発！' },
+        { videoId: 'SUhLVGIIw0A', start: 794, title: '呪われた廃病院！旧野木病院で恐怖の実証実験！' },
+        { videoId: 'uJMFLG3Nvos', start: 905, title: 'ジェイソン村スペシャル' },
+        { videoId: '822JgkOKk-E', start: 1050, title: '幽霊トンネル&ダルマ神社…千葉最恐スポット2本立て大突撃！' },
+        { videoId: '5O4rvAkRgbs', start: 740, title: 'そろそろ呪われたい！番組の名誉を懸けた落合霊障大作戦！' },
+        { videoId: '244F0QJGWbY', start: 709, title: '山の廃別荘ホテル潜入！戦慄の現場に一同騒然…！' },
+        { videoId: 'oEe5_qLoRXg', start: 937, title: '信州観光ホテル' },
+        { videoId: 'g2S3u7yap7o', start: 1102, title: '【後編】視聴者が選んだ！ゾゾゾ人気投票BEST20 新井さん家にリベンジスペシャル' },
+        { videoId: '8vIPyDViWIQ', start: 1169, title: '夏の特別編！学校の怪談スペシャル' },
+      ];
+      videoIndex = 0;
+
+      function onYouTubeIframeAPIReady() {
+        const selectMovieName = document.getElementById('movieName');
+
+        videoList.forEach((item, index, array) => {
+          const option = document.createElement('option'); //option�v�f��V�������
+          option.value = index; //option�v�f�̒l�ɁA���j���[�����ʂł���ԍ����w�肷��
+          option.innerHTML = "[" + (index + 1) + "/" + array.length + "] " + item.title;; //���[�U�[�����̕\���Ƃ��ă��j���[�����w�肷��
+          selectMovieName.appendChild(option); //�Z���N�g�{�b�N�X��option�v�f��ǉ�����
+        });
+
+        selectMovieName.addEventListener('change', (e) => {
+          if (suspendEvent) {
+            suspendEvent = false;
+            return;
+          }
+          videoIndex = e.target.value;
+          player.loadVideoById(videoList[videoIndex].videoId, videoList[videoIndex].start);
+        })
+
+        player = new YT.Player('player', {
+          height: '360',
+          width: '640',
+          videoId: videoList[videoIndex].videoId,
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          },
+          playerVars: {
+            start: videoList[videoIndex].start,
+          }
+        });
+      }
+
+      function onPlayerReady(event) {
+        event.target.playVideo();
+      }
+
+      function onPlayerStateChange(event) {
+        // 再生完了
+        if (event.data == 0) {
+          videoIndex++;
+          if (videoIndex >= videoList.length) { return; }
+
+          // 次のビデオを再生
+          event.target.loadVideoById(videoList[videoIndex].videoId, videoList[videoIndex].start);
+
+          // セレクトボックスの要素を選択
+          suspendEvent = true;
+          const selectMovieName = document.getElementById('movieName');
+          selectMovieName[videoIndex].selected = true;
+        }
+      }
+
+      function stopVideo() {
+        player.stopVideo();
+      }
+    </script>
+  </body>
+</html>
